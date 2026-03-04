@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Secrets & credentials — NEVER commit these!
+*.env
+.env
+.env.local
+google_credentials_output.json
+client_secret_*.json
+setup/google_credentials_output.json
+
+# Logs (optional — GitHub Actions uploads these as artifacts)
+# logs/run_log.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp

@@ -3,7 +3,7 @@ name: 🤖 Daily Affiliate Bot
 on:
   schedule:
     # Runs every day at 9:00 AM IST (3:30 AM UTC)
-    - cron: '30 3 * * *'
+    - cron: "30 3 * * *"
 
   # Allow manual trigger from GitHub Actions tab
   workflow_dispatch:
@@ -15,30 +15,30 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 🐍 Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: 📦 Install dependencies
         run: pip install -r requirements.txt
 
       - name: 🚀 Run affiliate bot
         env:
-          GEMINI_API_KEY:            ${{ secrets.GEMINI_API_KEY }}
-          GOOGLE_CREDENTIALS_JSON:   ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
-          BLOGGER_BLOG_ID:           ${{ secrets.BLOGGER_BLOG_ID }}
-          PINTEREST_ACCESS_TOKEN:    ${{ secrets.PINTEREST_ACCESS_TOKEN }}
-          PINTEREST_BOARD_ID:        ${{ secrets.PINTEREST_BOARD_ID }}
-          AMAZON_ASSOCIATE_ID:       ${{ secrets.AMAZON_ASSOCIATE_ID }}
-          BLOG_URL:                  ${{ secrets.BLOG_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          PINTEREST_ACCESS_TOKEN: ${{ secrets.PINTEREST_ACCESS_TOKEN }}
+          PINTEREST_BOARD_ID: ${{ secrets.PINTEREST_BOARD_ID }}
+          AMAZON_ASSOCIATE_ID: ${{ secrets.AMAZON_ASSOCIATE_ID }}
+          BLOG_URL: ${{ secrets.BLOG_URL }}
         run: python main.py
 
       - name: 📊 Upload logs
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: run-logs-${{ github.run_number }}
           path: logs/run_log.json

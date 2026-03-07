@@ -27,6 +27,7 @@ jobs:
 
       - name: 🚀 Run affiliate bot
         env:
+          PYTHONPATH: src
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
           BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}

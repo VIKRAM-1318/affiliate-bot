@@ -2,24 +2,25 @@
 main.py — Master orchestrator
 Runs 20 posts/day: keyword → blog → publish → image → pin
 """
+
 import os, time, json, sys
 from datetime import datetime
 
 # Add src to path
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from keywords import get_trending_keywords
-from content  import generate_blog_post
-from blogger  import publish_post
+from content import generate_blog_post
+from blogger import publish_post
 from image_gen import generate_pin_image
 from pinterest import create_pin
 
 # ── Config ───────────────────────────────────────────────────────────────────
-POSTS_PER_DAY   = 20
-DELAY_BETWEEN   = 15   # seconds between posts (avoids API rate limits)
-ASSOCIATE_ID    = os.environ.get("AMAZON_ASSOCIATE_ID", "YOUR_ASSOCIATE_ID")
+POSTS_PER_DAY = 20
+DELAY_BETWEEN = 15  # seconds between posts (avoids API rate limits)
+ASSOCIATE_ID = os.environ.get("AMAZON_ASSOCIATE_ID", "YOUR_ASSOCIATE_ID")
 PINTEREST_BOARD = os.environ.get("PINTEREST_BOARD_ID", "YOUR_BOARD_ID")
-LOG_FILE        = os.path.join(os.path.dirname(__file__), "..", "logs", "run_log.json")
+LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "logs", "run_log.json")
 
 os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 
@@ -40,10 +41,10 @@ def log_result(entry: dict):
 
 def run_daily():
     """Main daily run — processes POSTS_PER_DAY keywords end-to-end."""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"🚀 Affiliate Bot Started — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"   Target: {POSTS_PER_DAY} posts today")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     # ── Step 1: Get keywords ──────────────────────────────────────────────────
     print("📊 Step 1: Fetching trending keywords...")
@@ -60,7 +61,7 @@ def run_daily():
             "keyword": keyword,
             "status": "failed",
             "blog_url": "",
-            "pin_id": ""
+            "pin_id": "",
         }
 
         try:
@@ -74,16 +75,13 @@ def run_daily():
                 title=post["title"],
                 html_content=post["html_content"],
                 seo_description=post["seo_description"],
-                labels=["Amazon Finds", "Tech Gadgets", keyword.title()]
+                labels=["Amazon Finds", "Tech Gadgets", keyword.title()],
             )
             blog_url = blog_result.get("url", "")
 
             # ── Step 4: Generate pin image ────────────────────────────────────
             print(f"  🖼️   Generating pin image...")
-            image_path = generate_pin_image(
-                title=post["title"],
-                keyword=keyword
-            )
+            image_path = generate_pin_image(title=post["title"], keyword=keyword)
 
             # ── Step 5: Post to Pinterest ─────────────────────────────────────
             print(f"  📌  Pinning to Pinterest...")
@@ -92,16 +90,16 @@ def run_daily():
                 title=post["title"],
                 description=post["pin_caption"],
                 blog_url=blog_url,
-                image_path=image_path
+                image_path=image_path,
             )
 
             # ── Cleanup image ─────────────────────────────────────────────────
             if os.path.exists(image_path):
                 os.remove(image_path)
 
-            entry["status"]  = "success"
+            entry["status"] = "success"
             entry["blog_url"] = blog_url
-            entry["pin_id"]  = pin_result.get("id", "")
+            entry["pin_id"] = pin_result.get("id", "")
             success_count += 1
             print(f"  ✅  Done! → {blog_url}")
 
@@ -117,12 +115,12 @@ def run_daily():
             time.sleep(DELAY_BETWEEN)
 
     # ── Summary ───────────────────────────────────────────────────────────────
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"✅  Run Complete — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"   Success: {success_count}/{POSTS_PER_DAY}")
     print(f"   Failed:  {fail_count}/{POSTS_PER_DAY}")
     print(f"   Log:     {LOG_FILE}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
 
 if __name__ == "__main__":
